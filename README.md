@@ -38,13 +38,13 @@ For this project, the following assumptions are made :
 ## Project Objectives
 
 This section outlines the primary goals of the project, focusing on a comprehensive understanding and addressing the challenges of the problem.
-1. Describe the problem and its challenges.
+1. **Describe the problem and its challenges**
     - Clearly articulate the problem at hand and identify the specific challenges it presents. This includes describing the problem, outlining the constraints and stating the goals of the project.
-2. Formulate and implement the problem using Python.
+2. **Formulate and implement the problem using Python.**
     - Detail the steps taken to translate the problem into a solvable format using Python. Explain the reasoning behind each step and the motivations for the choices made during implementation.
-3. Propose two alternative problem-solving approaches.
+3. **Propose two alternative problem-solving approaches.**
     - Present two distinct methods for addressing the problem. Example : Uninformed or Informed search solutions, heuristic methods, local search or constraint satisfaction problem tecnhiques. Provide justification for why each method was selected and how it is relevant for solving the problem.
     - You can provide heuristics or approaches that compute a feasible or optimal solution.
     - Compare the two proposed approaches in terms of performance (execution time, quality of the proposed solution, etc.)
-4. Conclusion and reflections :
+4. **Conclusion and reflections :**
     - Summarize what this project has contributed to your learning experience. Discuss the challenges encountered during the project and how they were addressed. Reflect on any aspects of the project that were particularly insightful or noteworthy.
