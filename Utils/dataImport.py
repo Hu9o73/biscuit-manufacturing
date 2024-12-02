@@ -16,10 +16,11 @@ def build_roll(data, length):
     # Populate the result array based on the intervals
     for value, label in data:
         index = int(value)  # Determine which interval the value belongs to
-        if result[index] == ['o']:  # Replace 'o' if it's still the default
-            result[index] = [label]
-        else:
-            if label not in result[index]:  # Avoid duplicate letters
-                result[index].append(label)
+        if index <= length:
+            if result[index] == ['o']:  # Replace 'o' if it's still the default
+                result[index] = [label]
+            else:
+                if label not in result[index]:  # Avoid duplicate letters
+                    result[index].append(label)
     
     return result
