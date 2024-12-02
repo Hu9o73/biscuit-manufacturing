@@ -59,13 +59,6 @@ class CSP:
     def __str__(self):
         return self.name
     
-    def select_unassigned_variable(self):
-        '''Select a variable that has not yet been assigned a value.'''
-        for var in self.variables:
-            if var.state is None:
-                return var
-        return None  # All variables are assigned
-    
     
     
 
