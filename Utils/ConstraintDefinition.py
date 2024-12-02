@@ -3,10 +3,12 @@ def noOverlap(problem):
     roll = problem.roll
     biscuit_thresholds = problem.biscuit_thresholds 
     for x in biscuit_start_pos:
+        problem.complexity += 1
         biscuitType = roll[x]
         biscuitSize = biscuit_thresholds[biscuitType]['size']
         
         for j in range(x, x+biscuitSize):
+            problem.complexity += 1
             if roll[j] != biscuitType:
                 return False
 
@@ -19,12 +21,14 @@ def defectsUnderThreshold(problem):
     defect_data = problem.defect_data
 
     for i in biscuit_start_pos:
+        problem.complexity += 1
         biscuitType = roll[i]
         biscuitSize = biscuit_thresholds[biscuitType]['size']
         
         defectsCount = [0,0,0]
 
         for j in range(i, i+biscuitSize):
+            problem.complexity += 1
             if 'a' in defect_data[j]:
                 defectsCount[0] += 1
             if 'b' in defect_data[j]:

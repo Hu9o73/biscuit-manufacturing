@@ -16,13 +16,13 @@ class GeneticAlgorithm:
 
         self.model = nn.BiscuitPlacementNN(input_size, hidden_size, output_size)
 
-        self.population = self.initialize_population(population_size=population_size)
-
         # For later stats and plots...
         self.best_individual = None
         self.best_individuals = []
         self.avg_scores = []
-        self.steps = 0
+        self.complexity = 0
+
+        self.population = self.initialize_population(population_size=population_size)
         
         
 
@@ -35,6 +35,7 @@ class GeneticAlgorithm:
             
             # We get and loop through the parameters of my model (inputed in the function's params)
             for param in self.model.parameters():
+                self.complexity += 1
                 # We set a random value between -1 and 1 to each of my model's parameter
                 individual.append(np.random.uniform(-1, 1, param.numel()))
 
@@ -46,6 +47,7 @@ class GeneticAlgorithm:
     def set_model_weights(self, weights):
         start = 0
         for param in self.model.parameters():
+            self.complexity += 1
             numel = param.numel()  # Number of elements
             param.data = torch.tensor(weights[start:start + numel]).view(param.size()).float()
             start += numel
@@ -57,11 +59,13 @@ class GeneticAlgorithm:
         tempRoll = [None for _ in range(self.roll_length)]
         predictions = self.model(self.defects_tensor)
         while rank < self.roll_length:
+            self.complexity += 1
             index = torch.argmax(predictions[rank]).item()
             value = domain[index]
             if value is not None:
                 if rank + self.biscuit_thresholds[value]['size'] < self.roll_length:
                     for i in range(rank, rank + self.biscuit_thresholds[value]['size']):
+                        self.complexity += 1
                         tempRoll[i] = value
                     rank += self.biscuit_thresholds[value]['size']
                 else:
@@ -75,6 +79,7 @@ class GeneticAlgorithm:
         fitnesses = []
         index = 0
         for individual in self.population:
+            self.complexity += 1
             score = self.fitness_function(individual)
             fitnesses.append(score)
 
@@ -86,6 +91,7 @@ class GeneticAlgorithm:
         totalValue = 0
         rank = 0
         while rank < len(roll):
+            self.complexity += 1
             biscuitType = roll[rank]
             if biscuitType is not None:
                 totalValue += self.biscuit_thresholds[biscuitType]['value']
@@ -100,12 +106,14 @@ class GeneticAlgorithm:
         penalties = 0
         rank = 0
         while rank < len(roll):
+            self.complexity += 1
             biscuitType = roll[rank]
             if biscuitType is not None:
                 aCount = 0
                 bCount = 0
                 cCount = 0
                 for i in range(rank, rank + self.biscuit_thresholds[biscuitType]['size']):
+                    self.complexity += 1
                     if self.encoded_defects[i][0] == 1:
                         aCount += 1
                     if self.encoded_defects[i][1] == 1:
@@ -143,6 +151,7 @@ class GeneticAlgorithm:
     def tournament_selection(self, population, fitness_scores, k=3):
         selected = []
         for _ in range(2):  # Select two parents
+            self.complexity += 1
             tournament = np.random.choice(len(population), k, replace=False)
             best = tournament[np.argmax([fitness_scores[i] for i in tournament])]
             selected.append(population[best])
@@ -151,6 +160,7 @@ class GeneticAlgorithm:
     
     def mutate(self, individual, mutation_rate=0.1):
         for i in range(len(individual)):
+            self.complexity += 1
             if np.random.rand() < mutation_rate:
                 individual[i] += np.random.normal(-0.1, 0.1)
         return individual
@@ -161,7 +171,7 @@ class GeneticAlgorithm:
         # Looping through generations...
         for generation in range(n_generations):
             
-            self.steps += 1
+            self.complexity += 1
 
             # Calculating the fitness scores, returned as an array.
             fitness_scores = self.population_fitness()
@@ -185,7 +195,7 @@ class GeneticAlgorithm:
 
             # Selection, Crossover, and Mutation
             while len(new_population) < self.pop_size:
-
+                self.complexity += 1
                 # We make a tournament selection to select parents. Every time we make a tournament between 4 individuals
                 parent1, parent2 = self.tournament_selection(self.population, fitness_scores, 4)
                 

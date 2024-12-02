@@ -74,7 +74,7 @@ class BiscuitProblem(CSP):
         self.bestValue = 0
         self.bestRoll = []
         self.bestValues = []
-        self.step = 0
+        self.complexity = 0
         
         # Create variables
         for i in range(len(self.roll)):
@@ -93,10 +93,12 @@ class BiscuitProblem(CSP):
             return False
 
         for i in range(x, x+biscuitLength):
+            self.complexity +=1 
             if self.roll[i] is not None:
                 return False
 
         for i in range(x, x+biscuitLength):
+            self.complexity +=1 
             self.roll[i] = biscuitType
             self.variables[i].setState(biscuitType)
         
@@ -111,6 +113,7 @@ class BiscuitProblem(CSP):
         localBiscuitLength = int(self.biscuit_thresholds[localBiscuitType]['size'])
 
         for i in range(x, x+localBiscuitLength):
+            self.complexity +=1
             self.roll[i] = None
             self.variables[i].setState(None)
 
@@ -153,6 +156,7 @@ class BiscuitProblem(CSP):
         if(self.assignBiscuitToSpot(x_pos, value)):
             # Check all constraints
             for constraint in self.constraints:
+                self.complexity +=1 
                 if not constraint.check():
                     variable.setState(None)  # Reset state
                     self.removeBiscuitFromSpot(x_pos)
@@ -167,15 +171,13 @@ class BiscuitProblem(CSP):
     def backtrack(self):
         '''Backtracking algorithm to solve the biscuit CSP.'''
         
-        self.step +=1 
-
         #if(self.step%100000 == 0):
             #print("Current step: ", self.step)
 
         rollValue = self.computeRollValue()
         if rollValue > self.bestValue:
             self.bestValue = rollValue
-            self.bestValues.append([rollValue, copy.deepcopy(self.step)])
+            self.bestValues.append([rollValue, copy.deepcopy(self.complexity)])
             self.bestRoll = copy.deepcopy(self.roll)
         
 
@@ -191,6 +193,7 @@ class BiscuitProblem(CSP):
 
         # Try every value in the variable's domain
         for value in variable.domain:
+            self.complexity +=1 
             if self.is_consistent(variable, value):
                 # Assign value to spot
                 self.assignBiscuitToSpot(x_spot, value)
