@@ -22,6 +22,7 @@ class GeneticAlgorithm:
         self.best_individual = None
         self.best_individuals = []
         self.avg_scores = []
+        self.steps = 0
         
         
 
@@ -68,18 +69,6 @@ class GeneticAlgorithm:
             else:
                 rank +=1
 
-        """
-        while rank < len(self.defects_tensor)-self.vision_range:
-            predictions = self.model(self.defects_tensor[rank:rank+self.vision_range])
-            index = torch.argmax(predictions[0]).item()
-            value = domain[index]
-            if value is not None:
-                for i in range(rank, rank + self.biscuit_thresholds[value]['size']):
-                    tempRoll[i] = value
-                rank += self.biscuit_thresholds[value]['size']
-            else:
-                rank +=1
-        """
         return tempRoll
     
     def population_fitness(self):
@@ -168,10 +157,12 @@ class GeneticAlgorithm:
     
     def solve(self, n_elites=10, n_generations=50, mutation_rate=0.1):
         best_fitnesses = []
-
+        
         # Looping through generations...
         for generation in range(n_generations):
             
+            self.steps += 1
+
             # Calculating the fitness scores, returned as an array.
             fitness_scores = self.population_fitness()
 
