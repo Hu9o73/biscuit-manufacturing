@@ -383,6 +383,103 @@ instance, [0.93, 0.01, 0.02, 0.03, 0.01], in which case the corresponding tile w
 
 Now that our Neural Network and its architecture are defined, we must train it and make it yield good results. 
 
+\subsubsection{What's a Genetic Algorithm ?}
+
+A genetic algorithm is an optimization technique inspired by the principles of natural selection and genetics.
+It operates by evolving a population of candidate solutions over several generations to solve a problem. 
+Each candidate, is evaluated using a fitness function. The best-performing solutions are selected to produce 
+offspring through operations like crossover and mutation. Over time, the population converges towards an optimal or 
+near-optimal solution. Genetic algorithms are particularly effective for complex problems with large, 
+nonlinear search spaces.
+
+\subsubsection{Our population's evolution process}
+
+To solve this problem using a genetic algorithm, we first initialize a population of potential solutions. Each individual 
+in this population is a Neural Network with the architecture described precedently. What differentiates an individual form 
+another is the weights inside of its neurons.\\
+
+The first generation is initialized with random weight values, outputting random results regarding the biscuit placement 
+along the roll. Every generation, all individuals are classified according to a fitness function. Our fitness function is 
+the value of the roll, to which we substract penalties. Penalties are given when an individual gives a solution breaking 
+constraints. The more constraints are broken, the more penalties we give.\\
+
+Our Neural Network is built in such a way that it can't make biscuits overlap or get out of the roll's bounds. Thus, we 
+can't break these two constraints and no penalty is applied there. The constraint we focus on is the biscuit's defects 
+threshold. Every time a placed biscuit breaks a defects threshold, we remove 500 points to the fitness score of the 
+individual. Punishing that roughly individuals breaking this constraint ensures the best individual of the last generation 
+not to break it, and by extension, not break any of our constraint and give a viable solution, even if not optimal.\\
+
+Top n individuals are considered as "elite" individuals and are taken to the next generation. Others go through tournament
+selections (We pick the 2 best individuals of 4 randomly chosen). The ones who win tournament selection becomes parents of 
+2 child, child made using two-points crossover. Childs are mutated and inserted into the next generation's population.\\
+
+Note : Two-point crossover is a genetic algorithm operator used to combine the genetic information of two parent solutions to 
+produce offspring. In this method, two crossover points are randomly selected within the parent individuals' informations. 
+The segments between these points are swapped between the parents, creating two new offspring. This technique promotes 
+diversity in the population while preserving some structure of the parent solutions.
+
+\subsubsection{Preliminary results with Neural Network}
+
+With the following settings:
+\begin{itemize}
+    \item Number of generations : 500
+    \item Population size / generation : 100
+    \item Number of elite individuals / generation : 10
+    \item Mutation rate : 0.2
+\end{itemize}
+
+The best individual of the 500th generation yields a roll with a \textbf{value of 696}, for a complexity of 62,718,914.
+
+\subsection{Parallelizing, again}
+
+To further enhance the solution yielded by the genetic algorithm applied to our neural network, we can apply parallelization 
+principles to this means of finding a solution to the problem. Thus, by dividing the 500 units long roll into 2 sub rolls of 250 units each, we can apply the genetic algorithm to 2 smaller 
+neural networks, with 250 in/outputs rather than 500, greatly reducing computation time.\\
+
+With the following settings on each sub-roll:
+\begin{itemize}
+    \item Number of generations : 200 (less generations needed as the problem gets 'easier' to solve by dividing it)
+    \item Population size / generation : 100
+    \item Number of elite individuals / generation : 10
+    \item Mutation rate : 0.2\\
+\end{itemize}
+
+To make our best individual, we combine both best individuals of each sub-problem. The best individual 
+yields a roll with a \textbf{value of 684}, for a complexity of 26,152,197.
+
+
+
+\newpage
+
+\section{Final results and comparison}
+
+Overall here are our results :
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{l|c|c|c|c}
+        Algorithm & Value & $\Delta$Value (\%) & Complexity & $\Delta$Complexity (\%)\\ \hline
+        CSP - Backtracking & N/A & $-$ & $+\infty$ & $-$\\ \hline
+        CSP - Parallelized bckt & 758 & $-$\% & 149,283,905 & $-$\%\\ \hline
+        NN - Genetic Algorithm & 696 & 8\% off & 62,718,914 & 58\% less\\ \hline
+        NN - Parallelized GAs & 684 & 10\% off & 26,152,197 & 82\% less\\ \hline
+    \end{tabular}
+
+\end{table}
+
+The final results highlight the performance of different algorithms in terms of solution value and computational complexity. 
+The CSP Backtracking approach was unable to produce a valid solution due to its inability to handle the computational load, 
+resulting in an infinite complexity. The CSP Parallelized Backtracking method significantly improved the feasibility, 
+achieving a solution value of 758 but with high computational complexity. On the other hand, the Genetic Algorithm reduced 
+the complexity by 58\%, achieving a value of 696, which is only 8\% off from the best found value. Finally, the Parallelized 
+GA offered the best trade-off, reducing complexity by 82\% while maintaining a solution value of 684, just 10\% off the 
+best value. This demonstrates the effectiveness of parallelization and evolutionary strategies in balancing performance and 
+efficiency.\\
+
+Side note : As biscuit 3 offers the best price/space ratio with a value of 1.6 per tile occupied, if we only had biscuit '3'
+along the roll, not taking into account the defects thresholds the best theoretical value that the roll can have is 800.
+Our best result, 758, is fairly close of this theoretical "no defects" best value, further justifying the usage of a CSP to
+solve this problem.
 
 
 \end{document}
